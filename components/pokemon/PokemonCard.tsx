@@ -17,7 +17,7 @@ const PokemonCard: FC<Props> = ({ pokemon }) => {
     return (
         <Card hoverable clickable onClick={onClick}>
             <Card.Body css={{ p: 1 }}>
-                <Card.Image src={pokemon.img} width="100%" height={140} />
+                <Card.Image src={pokemon.img} width="100%" height={140} css={{ padding: '10px' }} />
             </Card.Body>
             <Card.Footer>
                 <Row justify='space-between'>
