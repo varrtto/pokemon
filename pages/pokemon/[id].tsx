@@ -1,6 +1,6 @@
 import { Button, Card, Container, Grid, Image, Text } from "@nextui-org/react";
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { pokeApi } from "../../api";
 import { Layout } from "../../components/layouts"
 import { Pokemon } from "../../interfaces";
@@ -10,18 +10,17 @@ interface Props {
   pokemon: Pokemon
 }
 
-
-
 const PokemonPage: NextPage<Props> = ({ pokemon }) => {
+  const [isInFavorites, setIsInFavorites] = useState(false)
 
-  const onToggleFavorite = () => {
+  const onToggleFavorite = useCallback(() => {
     localFavorites.toggleFavorite(pokemon.id)
-  }
+    setIsInFavorites((prevValue) => !prevValue)
+  }, [pokemon.id])
 
   useEffect(() => {
-
-  }, [])
-
+    setIsInFavorites(localFavorites.existInFavorites(pokemon.id))
+  }, [onToggleFavorite])
 
   return (
     <Layout title={pokemon.name}>
@@ -39,17 +38,20 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
         </Grid>
         <Grid xs={12} sm={8}>
           <Card>
+
             <Card.Header css={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
 
               <Text h1 transform="capitalize">{pokemon.name}</Text>
-              <Button color="gradient" ghost onPress={onToggleFavorite} shadow>
-                Guardar en favoritos
+              <Button color="gradient" ghost={!isInFavorites} onClick={onToggleFavorite} >
+                {isInFavorites ? 'En Favoritos' : 'Guardar en favoritos'}
+
               </Button>
 
             </Card.Header>
             <Card.Body>
               <Text size={30} >Sprites: </Text>
               <Container direction="row" display="flex" gap={0}>
+
                 <Image src={pokemon.sprites.front_default} alt={pokemon.name} width={100} height={100} />
                 <Image src={pokemon.sprites.back_default} alt={pokemon.name} width={100} height={100} />
                 <Image src={pokemon.sprites.front_shiny} alt={pokemon.name} width={100} height={100} />
